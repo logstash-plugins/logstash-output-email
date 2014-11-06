@@ -12,7 +12,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # This setting is deprecated in favor of Logstash's "conditionals" feature
   # If you were using this setting previously, please use conditionals instead.
   #
-  # If you need help converting your older 'match' setting to a conditional,
+  # If you need help converting your older `match` setting to a conditional,
   # I welcome you to join the #logstash irc channel on freenode or to email
   # the logstash-users@googlegroups.com mailling list and ask for help! :)
   config :match, :validate => :hash, :deprecated => true
@@ -20,9 +20,9 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # The fully-qualified email address to send the email to.
   #
   # This field also accepts a comma-separated string of addresses, for example: 
-  # "me@host.com, you@host.com"
+  # `"me@host.com, you@host.com"`
   #
-  # You can also use dynamic fields from the event with the %{fieldname} syntax.
+  # You can also use dynamic fields from the event with the `%{fieldname}` syntax.
   config :to, :validate => :string, :required => true
 
   # The fully-qualified email address for the From: field in the email.
@@ -34,7 +34,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # The fully-qualified email address(es) to include as cc: address(es).
   #
   # This field also accepts a comma-separated string of addresses, for example: 
-  # "me@host.com, you@host.com"
+  # `"me@host.com, you@host.com"`
   config :cc, :validate => :string
 
   # How Logstash should send the email, either via SMTP or by invoking sendmail.
@@ -42,13 +42,13 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   # Specify the options to use:
   #
-  # Via SMTP: smtpIporHost, port, domain, userName, password, authenticationType, starttls
+  # Via SMTP: `smtpIporHost`, `port`, `domain`, `userName`, `password`, `authenticationType`, `starttls`
   #
-  # Via sendmail: location, arguments
+  # Via sendmail: `location`, `arguments`
   #
   # If you do not specify any `options`, you will get the following equivalent code set in
   # every new mail object:
-  #
+  # [source,ruby]
   #     Mail.defaults do
   #       delivery_method :smtp, { :smtpIporHost         => "localhost",
   #                                :port                 => 25,
@@ -70,15 +70,15 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   #
   # Each mail object inherits the defaults set in Mail.delivery_method. However, on
   # a per email basis, you can override the method:
-  #
+  # [source,ruby]
   #     mail.delivery_method :sendmail
   #
   # Or you can override the method and pass in settings:
-  #
+  # [source,ruby]
   #     mail.delivery_method :sendmail, { :address => 'some.host' }
   #
   # You can also just modify the settings:
-  #
+  # [source,ruby]
   #     mail.delivery_settings = { :address => 'some.host' }
   #
   # The hash you supply is just merged against the defaults with "merge!" and the result
