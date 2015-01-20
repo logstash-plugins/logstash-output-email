@@ -7,7 +7,6 @@ require "logstash/namespace"
 class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   config_name "email"
-  milestone 1
 
   # This setting is deprecated in favor of Logstash's "conditionals" feature
   # If you were using this setting previously, please use conditionals instead.
