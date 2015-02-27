@@ -1,25 +1,24 @@
-require "logstash/devutils/rspec/spec_helper"
+require "spec_helper"
 require "rumbster"
 require "message_observers"
 
-describe "outputs/email", :broken => true do
-    
+describe "outputs/email" do
 
-    port = 2525
-    let (:rumbster) { Rumbster.new(port) }
-    let (:message_observer) { MailMessageObserver.new }
+  port = 2525
+  let (:rumbster) { Rumbster.new(port) }
+  let (:message_observer) { MailMessageObserver.new }
 
-    before :each do
-        rumbster.add_observer message_observer
-        rumbster.start
-    end
+  before :each do
+    rumbster.add_observer message_observer
+    rumbster.start
+  end
 
-    after :each do
-        rumbster.stop
-    end
+  after :each do
+    rumbster.stop
+  end
 
-    describe  "use a list of email as mail.to (LOGSTASH-827)" do
-        config <<-CONFIG
+  describe  "use a list of email as mail.to (LOGSTASH-827)" do
+    config <<-CONFIG
         input {
             generator {
                 message => "hello world"
@@ -39,16 +38,16 @@ describe "outputs/email", :broken => true do
                 options => ["port", #{port}]
             }
         }
-        CONFIG
+    CONFIG
 
-        agent do
-            insist {message_observer.messages.size} == 1
-            insist {message_observer.messages[0].to} == ["email1@host", "email2@host"]
-        end
+    agent do
+      insist {message_observer.messages.size} == 1
+      insist {message_observer.messages[0].to} == ["email1@host", "email2@host"]
     end
+  end
 
-    describe  "use an array of email as mail.to (LOGSTASH-827)" do
-        config <<-CONFIG
+  describe  "use an array of email as mail.to (LOGSTASH-827)" do
+    config <<-CONFIG
         input {
             generator {
                 message => "hello world"
@@ -70,16 +69,16 @@ describe "outputs/email", :broken => true do
                 options => ["port", #{port}]
             }
         }
-        CONFIG
+    CONFIG
 
-        agent do
-            insist {message_observer.messages.size} == 1
-            insist {message_observer.messages[0].to} == ["email1@host", "email2@host"]
-        end
+    agent do
+      insist {message_observer.messages.size} == 1
+      insist {message_observer.messages[0].to} == ["email1@host", "email2@host"]
     end
+  end
 
-    describe  "multi-lined text body (LOGSTASH-841)" do
-        config <<-CONFIG
+  describe  "multi-lined text body (LOGSTASH-841)" do
+    config <<-CONFIG
         input {
             generator {
                 message => "hello world"
@@ -101,17 +100,17 @@ describe "outputs/email", :broken => true do
                 options => ["port", #{port}]
             }
         }
-        CONFIG
+    CONFIG
 
-        agent do
-            insist {message_observer.messages.size} == 1
-            insist {message_observer.messages[0].subject} == "Hello World"
-            insist {message_observer.messages[0].body.raw_source} == "Line1\r\nLine2\r\nLine3"
-        end
+    agent do
+      insist {message_observer.messages.size} == 1
+      insist {message_observer.messages[0].subject} == "Hello World"
+      insist {message_observer.messages[0].body.raw_source} == "Line1\r\nLine2\r\nLine3"
     end
+  end
 
-    describe  "use nil authenticationType (LOGSTASH-559)" do
-        config <<-CONFIG
+  describe  "use nil authenticationType (LOGSTASH-559)" do
+    config <<-CONFIG
         input {
             generator {
                 message => "hello world"
@@ -133,17 +132,17 @@ describe "outputs/email", :broken => true do
                 options => ["port", #{port}, "authenticationType", "nil"]
             }
         }
-        CONFIG
+    CONFIG
 
-        agent do
-            insist {message_observer.messages.size} == 1
-            insist {message_observer.messages[0].subject} == "Hello World"
-            insist {message_observer.messages[0].body.raw_source} == "Line1\r\nLine2\r\nLine3"
-        end
+    agent do
+      insist {message_observer.messages.size} == 1
+      insist {message_observer.messages[0].subject} == "Hello World"
+      insist {message_observer.messages[0].body.raw_source} == "Line1\r\nLine2\r\nLine3"
     end
+  end
 
-    describe  "match on source and message (LOGSTASH-826)" do
-        config <<-CONFIG
+  describe  "match on source and message (LOGSTASH-826)" do
+    config <<-CONFIG
         input {
             generator {
                 message => "hello world"
@@ -160,14 +159,14 @@ describe "outputs/email", :broken => true do
                 options => ["port", #{port}, "authenticationType", "nil"]
             }
         }
-        CONFIG
+    CONFIG
 
-        agent do
-            insist {message_observer.messages.size} == 1
-            insist {message_observer.messages[0].subject} == "Hello World"
-            insist {message_observer.messages[0].body.raw_source} == "Mail body"
-        end
+    agent do
+      insist {message_observer.messages.size} == 1
+      insist {message_observer.messages[0].subject} == "Hello World"
+      insist {message_observer.messages[0].body.raw_source} == "Mail body"
     end
+  end
 end
 
 
