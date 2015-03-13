@@ -8,14 +8,6 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   config_name "email"
 
-  # This setting is deprecated in favor of Logstash's "conditionals" feature
-  # If you were using this setting previously, please use conditionals instead.
-  #
-  # If you need help converting your older `match` setting to a conditional,
-  # I welcome you to join the #logstash irc channel on freenode or to post
-  # a message on https://discuss.elastic.co/c/logstash and ask for help! :)
-  config :match, :validate => :hash, :deprecated => true
-
   # The fully-qualified email address to send the email to.
   #
   # This field also accepts a comma-separated string of addresses, for example: 
@@ -137,90 +129,11 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   public
   def receive(event)
     return unless output?(event)
-      @logger.debug("Event being tested for Email", :tags => @tags, :event => event)
-      # Set Intersection - returns a new array with the items that are the same between the two
-      if !@tags.empty? && (event["tags"] & @tags).size == 0
-         # Skip events that have no tags in common with what we were configured
-         @logger.debug("No Tags match for Email Output!")
-         return
-      end
 
-    @logger.debug? && @logger.debug("Match data for Email - ", :match => @match)
-    successful = false
-    matchName = ""
-    operator = ""
-
-    # TODO(sissel): Delete this once match support is removed.
-    @match && @match.each do |name, query|
-      if successful
-        break
-      else
-        matchName = name
-      end
-      # now loop over the csv query
-      queryArray = query.split(',')
-      index = 1
-      while index < queryArray.length
-        field = queryArray.at(index -1)
-        value = queryArray.at(index)
-        index = index + 2
-        if field == ""
-          if value.downcase == "and"
-            operator = "and"
-          elsif value.downcase == "or"
-            operator = "or"
-          else
-            operator = "or"
-            @logger.error("Operator Provided Is Not Found, Currently We Only Support AND/OR Values! - defaulting to OR")
-          end
-        else
-          hasField = event[field]
-          @logger.debug? and @logger.debug("Does Event Contain Field - ", :hasField => hasField)
-          isValid = false
-          # if we have maching field and value is wildcard - we have a success
-          if hasField
-            if value == "*"
-              isValid = true
-            else
-              # we get an array so we need to loop over the values and find if we have a match
-              eventFieldValues = event[field]
-              @logger.debug? and @logger.debug("Event Field Values - ", :eventFieldValues => eventFieldValues)
-              eventFieldValues = [eventFieldValues] if not eventFieldValues.respond_to?(:each)
-              eventFieldValues.each do |eventFieldValue|
-                isValid = validateValue(eventFieldValue, value)
-                if isValid # no need to iterate any further
-                  @logger.debug("VALID CONDITION FOUND - ", :eventFieldValue => eventFieldValue, :value => value) 
-                  break
-                end
-              end # end eventFieldValues.each do
-            end # end value == "*"
-          end # end hasField
-          # if we have an AND operator and we have a successful == false break
-          if operator == "and" && !isValid
-            successful = false
-          elsif operator == "or" && (isValid || successful)
-            successful = true
-          else
-            successful = isValid
-          end
-        end
-      end
-    end # @match.each do
-
-    # The 'match' setting is deprecated and optional. If not set,
-    # default to success.
-    successful = true if @match.nil?
-
-    @logger.debug? && @logger.debug("Email Did we match any alerts for event : ", :successful => successful)
-
-    if successful
-      # first add our custom field - matchName - so we can use it in the sprintf function
-      event["matchName"] = matchName unless matchName.empty?
       @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments, :to => to, :to => to)
       formatedSubject = event.sprintf(@subject)
       formattedBody = event.sprintf(@body)
       formattedHtmlBody = event.sprintf(@htmlbody)
-      # we have a match(s) - send email
       mail = Mail.new
       mail.from = event.sprintf(@from)
       mail.to = event.sprintf(@to)
@@ -253,55 +166,5 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
         @logger.error("Something happen while delivering an email", :exception => e)
         @logger.debug? && @logger.debug("Processed event: ", :event => event)
       end
-    end # end if successful
   end # def receive
-
-
-  private
-  def validateValue(eventFieldValue, value)
-    valid = false
-    # order of this if-else is important - please don't change it
-    if value.start_with?(">=")# greater than or equal
-      value.gsub!(">=","")
-      if eventFieldValue.to_i >= value.to_i
-        valid = true
-      end
-    elsif value.start_with?("<=")# less than or equal
-      value.gsub!("<=","")
-      if eventFieldValue.to_i <= value.to_i
-        valid = true
-      end
-    elsif value.start_with?(">")# greater than
-      value.gsub!(">","")
-      if eventFieldValue.to_i > value.to_i
-        valid = true
-      end
-    elsif value.start_with?("<")# less than
-      value.gsub!("<","")
-      if eventFieldValue.to_i < value.to_i
-        valid = true
-      end
-    elsif value.start_with?("*")# contains
-      value.gsub!("*","")
-      if eventFieldValue.include?(value)
-        valid = true
-      end
-    elsif value.start_with?("!*")# does not contain
-      value.gsub!("!*","")
-      if !eventFieldValue.include?(value)
-        valid = true
-      end
-    elsif value.start_with?("!")# not equal
-      value.gsub!("!","")
-      if eventFieldValue != value
-        valid = true
-      end
-    else # default equal
-      if eventFieldValue == value
-        valid = true
-      end
-    end
-    return valid
-  end # end validateValue()
-
 end # class LogStash::Outputs::Email
