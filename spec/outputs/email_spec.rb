@@ -1,3 +1,4 @@
+# encoding: utf-8
 require "spec_helper"
 require "rumbster"
 require "message_observers"
@@ -7,6 +8,8 @@ describe "outputs/email" do
   port = 2525
   let (:rumbster) { Rumbster.new(port) }
   let (:message_observer) { MailMessageObserver.new }
+  plugin = LogStash::Plugin.lookup("output", "email")
+
 
   before :each do
     rumbster.add_observer message_observer
@@ -18,153 +21,72 @@ describe "outputs/email" do
   end
 
   describe  "use a list of email as mail.to (LOGSTASH-827)" do
-    config <<-CONFIG
-        input {
-            generator {
-                message => "hello world"
-                count => 1
-                type => "generator"
-            }
-        }
-        filter {
-            noop {
-                add_field => ["dummy_match", "ok"]
-            }
-        }
-        output{
-            email {
-                to => "email1@host, email2@host"
-                match => ["mymatch", "dummy_match,ok"]
-                options => ["port", #{port}]
-            }
-        }
-    CONFIG
 
-    agent do
-      insist {message_observer.messages.size} == 1
-      insist {message_observer.messages[0].to} == ["email1@host", "email2@host"]
+    it "supports list of emails in to field" do
+      subject = plugin.new("to" => ["email1@host, email2@host"],
+                           "match" => ["mymatch", "dummy_match,ok"],
+                           "options" => ["port", port])
+      subject.register
+      subject.receive(LogStash::Event.new("message" => "hello", "dummy_match" => "ok"))
+      expect(message_observer.messages.size).to eq(1)
+      expect(message_observer.messages[0].to).to eq(["email1@host", "email2@host"])
     end
-  end
 
-  describe  "use an array of email as mail.to (LOGSTASH-827)" do
-    config <<-CONFIG
-        input {
-            generator {
-                message => "hello world"
-                count => 1
-                type => "generator"
-            }
-        }
-        filter {
-            noop {
-                add_field => ["dummy_match", "ok"]
-                add_field => ["to_addr", "email1@host"]
-                add_field => ["to_addr", "email2@host"]
-            }
-        }
-        output{
-            email {
-                to => "%{to_addr}"
-                match => ["mymatch", "dummy_match,ok"]
-                options => ["port", #{port}]
-            }
-        }
-    CONFIG
-
-    agent do
-      insist {message_observer.messages.size} == 1
-      insist {message_observer.messages[0].to} == ["email1@host", "email2@host"]
+    it "multiple *to* addresses in a field" do
+      subject = plugin.new("to" => "%{to_addr}",
+                           "match" => ["mymatch", "dummy_match,ok"],
+                           "options" => ["port", port])
+      subject.register
+      subject.receive(LogStash::Event.new("message" => "hello",
+                                          "dummy_match" => "ok",
+                                          "to_addr" => ["email1@host", "email2@host"]))
+      expect(message_observer.messages.size).to eq(1)
+      expect(message_observer.messages[0].to).to eq(["email1@host", "email2@host"])
     end
   end
 
   describe  "multi-lined text body (LOGSTASH-841)" do
-    config <<-CONFIG
-        input {
-            generator {
-                message => "hello world"
-                count => 1
-                type => "generator"
-            }
-        }
-        filter {
-            noop {
-                add_field => ["dummy_match", "ok"]
-            }
-        }
-        output{
-            email {
-                to => "me@host"
-                subject => "Hello World"
-                body => "Line1\\nLine2\\nLine3"
-                match => ["mymatch", "dummy_match,*"]
-                options => ["port", #{port}]
-            }
-        }
-    CONFIG
-
-    agent do
-      insist {message_observer.messages.size} == 1
-      insist {message_observer.messages[0].subject} == "Hello World"
-      insist {message_observer.messages[0].body.raw_source} == "Line1\r\nLine2\r\nLine3"
+    it "handles multiline messages" do
+      subject = plugin.new("to" => "me@host",
+                           "subject" => "Hello World",
+                           "body" => "Line1\\nLine2\\nLine3",
+                           "match" => ["mymatch", "dummy_match,*"],
+                           "options" => ["port", port])
+      subject.register
+      subject.receive(LogStash::Event.new("message" => "hello", "dummy_match" => "ok"))
+      expect(message_observer.messages.size).to eq(1)
+      expect(message_observer.messages[0].subject).to eq("Hello World")
+      expect(message_observer.messages[0].body.raw_source).to eq("Line1\r\nLine2\r\nLine3")
     end
   end
 
   describe  "use nil authenticationType (LOGSTASH-559)" do
-    config <<-CONFIG
-        input {
-            generator {
-                message => "hello world"
-                count => 1
-                type => "generator"
-            }
-        }
-        filter {
-            noop {
-                add_field => ["dummy_match", "ok"]
-            }
-        }
-        output{
-            email {
-                to => "me@host"
-                subject => "Hello World"
-                body => "Line1\\nLine2\\nLine3"
-                match => ["mymatch", "dummy_match,*"]
-                options => ["port", #{port}, "authenticationType", "nil"]
-            }
-        }
-    CONFIG
-
-    agent do
-      insist {message_observer.messages.size} == 1
-      insist {message_observer.messages[0].subject} == "Hello World"
-      insist {message_observer.messages[0].body.raw_source} == "Line1\r\nLine2\r\nLine3"
+    it "reads messages correctly" do
+      subject = plugin.new("to" => "me@host",
+                           "subject" => "Hello World",
+                           "body" => "Line1\\nLine2\\nLine3",
+                           "match" => ["mymatch", "dummy_match,*"],
+                           "options" => ["port", port, "authenticationType", "nil"])
+      subject.register
+      subject.receive(LogStash::Event.new("message" => "hello", "dummy_match" => "ok"))
+      expect(message_observer.messages.size).to eq(1)
+      expect(message_observer.messages[0].subject).to eq("Hello World")
+      expect(message_observer.messages[0].body.raw_source).to eq("Line1\r\nLine2\r\nLine3")
     end
   end
 
   describe  "match on source and message (LOGSTASH-826)" do
-    config <<-CONFIG
-        input {
-            generator {
-                message => "hello world"
-                count => 1
-                type => "generator"
-            }
-        }
-        output{
-            email {
-                to => "me@host"
-                subject => "Hello World"
-                body => "Mail body"
-                match => ["messageAndSourceMatch", "message,*hello,,and,source,*generator"]
-                options => ["port", #{port}, "authenticationType", "nil"]
-            }
-        }
-    CONFIG
-
-    agent do
-      insist {message_observer.messages.size} == 1
-      insist {message_observer.messages[0].subject} == "Hello World"
-      insist {message_observer.messages[0].body.raw_source} == "Mail body"
+    it "reads messages correctly" do
+      subject = plugin.new("to" => "me@host",
+                           "subject" => "Hello World",
+                           "body" => "Mail body",
+                           "match" => [ "messageAndSourceMatch", "message,*hello,,and,type,*generator"],
+                           "options" => ["port", port, "authenticationType", "nil"])
+      subject.register
+      subject.receive(LogStash::Event.new("message" => "hello world", "type" => "generator"))
+      expect(message_observer.messages.size).to eq(1)
+      expect(message_observer.messages[0].subject).to eq("Hello World")
+      expect(message_observer.messages[0].body.raw_source).to eq("Mail body")
     end
   end
 end
