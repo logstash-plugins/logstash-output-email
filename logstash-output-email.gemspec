@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   # Gem dependencies
   s.add_runtime_dependency "logstash-core", '>= 1.4.0', '< 2.0.0'
 
-  s.add_runtime_dependency 'mail'
+  s.add_runtime_dependency 'mail', '>= 2.6.3', '~> 2.6.0'
 
   s.add_development_dependency 'logstash-devutils'
   s.add_development_dependency 'rumbster'
