@@ -56,7 +56,7 @@ describe "outputs/email" do
       subject.receive(LogStash::Event.new("message" => "hello", "dummy_match" => "ok"))
       expect(message_observer.messages.size).to eq(1)
       expect(message_observer.messages[0].subject).to eq("Hello World")
-      expect(message_observer.messages[0].body.raw_source).to eq("Line1\r\nLine2\r\nLine3")
+      expect(message_observer.messages[0].body.raw_source).to eq("Line1\r\nLine2\r\nLine3\r\n")
     end
   end
 
@@ -71,7 +71,7 @@ describe "outputs/email" do
       subject.receive(LogStash::Event.new("message" => "hello", "dummy_match" => "ok"))
       expect(message_observer.messages.size).to eq(1)
       expect(message_observer.messages[0].subject).to eq("Hello World")
-      expect(message_observer.messages[0].body.raw_source).to eq("Line1\r\nLine2\r\nLine3")
+      expect(message_observer.messages[0].body.raw_source).to eq("Line1\r\nLine2\r\nLine3\r\n")
     end
   end
 
@@ -86,7 +86,7 @@ describe "outputs/email" do
       subject.receive(LogStash::Event.new("message" => "hello world", "type" => "generator"))
       expect(message_observer.messages.size).to eq(1)
       expect(message_observer.messages[0].subject).to eq("Hello World")
-      expect(message_observer.messages[0].body.raw_source).to eq("Mail body")
+      expect(message_observer.messages[0].body.raw_source).to eq("Mail body\r\n")
     end
   end
 end
