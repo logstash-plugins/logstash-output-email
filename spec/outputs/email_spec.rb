@@ -18,6 +18,7 @@ describe "outputs/email" do
 
   after :each do
     rumbster.stop
+    sleep 0.01 until rumbster.stopped?
   end
 
   describe  "use a list of email as mail.to (LOGSTASH-827)" do
