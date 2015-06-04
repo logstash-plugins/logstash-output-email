@@ -12,8 +12,8 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # If you were using this setting previously, please use conditionals instead.
   #
   # If you need help converting your older `match` setting to a conditional,
-  # I welcome you to join the #logstash irc channel on freenode or to email
-  # the logstash-users@googlegroups.com mailling list and ask for help! :)
+  # I welcome you to join the #logstash irc channel on freenode or to post
+  # a message on https://discuss.elastic.co/c/logstash and ask for help! :)
   config :match, :validate => :hash, :deprecated => true
 
   # The fully-qualified email address to send the email to.
