@@ -119,7 +119,8 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
           :password             => options.fetch("password", nil),
           :authentication       => options.fetch("authenticationType", nil),
           :enable_starttls_auto => options.fetch("starttls", false),
-          :debug                => options.fetch("debug", false)
+          :debug                => options.fetch("debug", false),
+          :openssl_verify_mode  => options.fetch("openssl_verify_mode", 'peer')
         }
       end
     elsif @via == 'sendmail'
