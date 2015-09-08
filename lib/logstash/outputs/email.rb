@@ -249,8 +249,9 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       @logger.debug? and @logger.debug("Sending mail with these values : ", :from => mail.from, :to => mail.to, :cc => mail.cc, :subject => mail.subject)
       begin
         mail.deliver!
-      rescue Exception => e
+      rescue StandardError => e
         @logger.error("Something happen while delivering an email", :exception => e)
+        @logger.debug? && @logger.debug("Processed event: ", :event => event)
       end
     end # end if successful
   end # def receive
