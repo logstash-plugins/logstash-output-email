@@ -5,10 +5,10 @@ require "message_observers"
 
 describe "outputs/email" do
 
-  port = 2525
-  let (:rumbster) { Rumbster.new(port) }
+  let (:port)             { rand(1024..65535) }
+  let (:rumbster)         { Rumbster.new(port) }
   let (:message_observer) { MailMessageObserver.new }
-  plugin = LogStash::Plugin.lookup("output", "email")
+  let(:plugin)            { LogStash::Plugin.lookup("output", "email") }
 
 
   before :each do
