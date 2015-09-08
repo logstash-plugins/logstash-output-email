@@ -247,7 +247,11 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
         mail.add_file(fileLocation)
       end # end @attachments.each
       @logger.debug? and @logger.debug("Sending mail with these values : ", :from => mail.from, :to => mail.to, :cc => mail.cc, :subject => mail.subject)
-      mail.deliver!
+      begin
+        mail.deliver!
+      rescue Exception => e
+        @logger.error("Something happen while delivering an email", :exception => e)
+      end
     end # end if successful
   end # def receive
 
