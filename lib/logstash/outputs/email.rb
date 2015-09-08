@@ -31,51 +31,29 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # How Logstash should send the email, either via SMTP or by invoking sendmail.
   config :via, :validate => :string, :default => "smtp"
 
-  # Specify the options to use:
-  #
-  # Via SMTP: `smtpIporHost`, `port`, `domain`, `userName`, `password`, `authenticationType`, `starttls`
-  #
-  # Via sendmail: `location`, `arguments`
-  #
-  # If you do not specify any `options`, you will get the following equivalent code set in
-  # every new mail object:
-  # [source,ruby]
-  #     Mail.defaults do
-  #       delivery_method :smtp, { :smtpIporHost         => "localhost",
-  #                                :port                 => 25,
-  #                                :domain               => 'localhost.localdomain',
-  #                                :userName             => nil,
-  #                                :password             => nil,
-  #                                :authenticationType   => nil,(plain, login and cram_md5)
-  #                                :starttls             => true  }
-  #
-  #       retriever_method :pop3, { :address             => "localhost",
-  #                                 :port                => 995,
-  #                                 :user_name           => nil,
-  #                                 :password            => nil,
-  #                                 :enable_ssl          => true }
-  #
-  #       Mail.delivery_method.new  #=> Mail::SMTP instance
-  #       Mail.retriever_method.new #=> Mail::POP3 instance
-  #     end
-  #
-  # Each mail object inherits the defaults set in Mail.delivery_method. However, on
-  # a per email basis, you can override the method:
-  # [source,ruby]
-  #     mail.delivery_method :sendmail
-  #
-  # Or you can override the method and pass in settings:
-  # [source,ruby]
-  #     mail.delivery_method :sendmail, { :address => 'some.host' }
-  #
-  # You can also just modify the settings:
-  # [source,ruby]
-  #     mail.delivery_settings = { :address => 'some.host' }
-  #
-  # The hash you supply is just merged against the defaults with "merge!" and the result
-  # assigned to the mail object.  For instance, the above example will change only the
-  # `:address` value of the global `smtp_settings` to be 'some.host', retaining all other values.
-  config :options, :validate => :hash, :default => {}
+  # The address used to connect to the mail server
+  config :address, :validate => :string, :default => "localhost"
+
+  # Port used to communicate with the mail server
+  config :port, :validate => :number, :default => 25
+
+  # Domain used to send the email messages
+  config :domain, :validate => :string, :default => "localhost"
+
+  # Username to authenticate with the server
+  config :username, :validate => :string
+
+  # Password to authenticate with the server
+  config :password, :validate => :string
+
+  # Authentication method used when identifying with the server
+  config :authentication, :validate => :string
+
+  # Enables TLS when communicating with the server
+  config :use_tls, :validate => :boolean, :default => false
+
+  # Run the mail relay in debug mode
+  config :debug, :validate => :boolean, :default => false
 
   # Subject: for the email.
   config :subject, :validate => :string, :default => ""
@@ -97,22 +75,20 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   def register
     require "mail"
 
-    # Mail uses instance_eval which changes the scope of self so @options is
-    # inaccessible from inside 'Mail.defaults'. So set a local variable instead.
-    options = @options
+    options = {
+      :address              => @address,
+      :port                 => @port,
+      :domain               => @domain,
+      :user_name            => @username,
+      :password             => @password,
+      :authentication       => @authentication,
+      :enable_starttls_auto => @use_tls,
+      :debug                => @debug
+    }
 
     if @via == "smtp"
       Mail.defaults do
-        delivery_method :smtp, {
-          :address              => options.fetch("smtpIporHost", "localhost"),
-          :port                 => options.fetch("port", 25),
-          :domain               => options.fetch("domain", "localhost"),
-          :user_name            => options.fetch("userName", nil),
-          :password             => options.fetch("password", nil),
-          :authentication       => options.fetch("authenticationType", nil),
-          :enable_starttls_auto => options.fetch("starttls", false),
-          :debug                => options.fetch("debug", false)
-        }
+        delivery_method :smtp, options
       end
     elsif @via == 'sendmail'
       Mail.defaults do
@@ -123,7 +99,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
         delivery_method :@via, options
       end
     end # @via tests
-    @logger.debug("Email Output Registered!", :config => @config)
+    @logger.debug("Email Output Registered!", :config => options, :via => @via)
   end # def register
 
   public

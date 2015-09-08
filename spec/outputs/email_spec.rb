@@ -27,22 +27,23 @@ describe "outputs/email" do
 
       it "supports list of emails in to field" do
         subject = plugin.new("to" => ["email1@host, email2@host"],
-                             "options" => ["port", port])
+                             "port" => port)
         subject.register
-        subject.receive(LogStash::Event.new("message" => "hello", "dummy_match" => "ok"))
+        subject.receive(LogStash::Event.new("message" => "hello"))
         expect(message_observer.messages.size).to eq(1)
         expect(message_observer.messages[0].to).to eq(["email1@host", "email2@host"])
       end
 
       it "multiple *to* addresses in a field" do
         subject = plugin.new("to" => "%{to_addr}",
-                             "options" => ["port", port])
+                             "port" => port)
         subject.register
         subject.receive(LogStash::Event.new("message" => "hello",
                                             "to_addr" => ["email1@host", "email2@host"]))
         expect(message_observer.messages.size).to eq(1)
         expect(message_observer.messages[0].to).to eq(["email1@host", "email2@host"])
       end
+
     end
 
     context  "multi-lined text body (LOGSTASH-841)" do
@@ -50,7 +51,7 @@ describe "outputs/email" do
         subject = plugin.new("to" => "me@host",
                              "subject" => "Hello World",
                              "body" => "Line1\\nLine2\\nLine3",
-                             "options" => ["port", port])
+                             "port" => port)
         subject.register
         subject.receive(LogStash::Event.new("message" => "hello"))
         expect(message_observer.messages.size).to eq(1)
@@ -63,7 +64,7 @@ describe "outputs/email" do
           subject = plugin.new("to" => "me@host",
                                "subject" => "Hello World",
                                "body" => "Line1\\nLine2\\nLine3",
-                               "options" => ["port", port, "authenticationType", "nil"])
+                               "port" => port)
           subject.register
           subject.receive(LogStash::Event.new("message" => "hello"))
           expect(message_observer.messages.size).to eq(1)
