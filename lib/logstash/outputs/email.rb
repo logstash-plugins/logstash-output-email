@@ -126,6 +126,10 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       Mail.defaults do
         delivery_method :sendmail
       end
+    elsif @via == 'exim'
+      Mail.defaults do
+        delivery_method :exim, :location => options.fetch("location", "/usr/bin/exim")
+      end
     else
       Mail.defaults do
         delivery_method :@via, options
