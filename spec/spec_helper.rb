@@ -8,7 +8,7 @@ class LogStash::Filters::NOOP < LogStash::Filters::Base
   def register; end
 
   def filter(event)
-    return unless filter?(event)
+    
     filter_matched(event)
   end
 end
