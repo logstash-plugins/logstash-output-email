@@ -104,7 +104,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   public
   def receive(event)
-    return unless output?(event)
+    
 
       @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments, :to => to, :to => to)
       formatedSubject = event.sprintf(@subject)
