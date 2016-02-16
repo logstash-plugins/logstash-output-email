@@ -2,6 +2,7 @@
 require "spec_helper"
 require "rumbster"
 require "message_observers"
+require "tempfile"
 
 describe "outputs/email" do
 
@@ -22,6 +23,39 @@ describe "outputs/email" do
   end
 
   describe "send email" do
+
+    context  "use a file attachment" do
+
+      it "attaches a specifc path to the email" do
+        Tempfile.open('logstash-output-email') do |attachment|
+          attachment.write("Hello, World")
+          attachment.close()
+          subject = plugin.new("to" => "me@host",
+                               "port" => port,
+                               "attachments" => [attachment.path])
+          subject.register
+          subject.receive(LogStash::Event.new())
+          expect(message_observer.messages.size).to eq(1)
+          expect(message_observer.messages[0].attachments.size).to eq(1)
+          expect(message_observer.messages[0].attachments[0].body).to eq("Hello, World")
+        end
+      end
+
+      it "computes field data in attachments configuration" do
+        Tempfile.open('logstash-output-email') do |attachment|
+          attachment.write("Hello, World")
+          attachment.close()
+          subject = plugin.new("to" => "me@host",
+                               "port" => port,
+                               "attachments" => ["%{attachment_name}"])
+          subject.register
+          subject.receive(LogStash::Event.new("attachment_name" => attachment.path))
+          expect(message_observer.messages.size).to eq(1)
+          expect(message_observer.messages[0].attachments.size).to eq(1)
+          expect(message_observer.messages[0].attachments[0].body).to eq("Hello, World")
+        end
+      end
+    end
 
     context  "use a list of email as mail.to (LOGSTASH-827)" do
 
