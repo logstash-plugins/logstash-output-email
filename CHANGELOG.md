@@ -1,6 +1,10 @@
+# 3.0.4
+  - Set the version of Mail to 2.6.3, since 2.6.4 has a dependency incompatible with jruby see https://github.com/elastic/logstash/issues/4883
+  
 # 3.0.3
   - New dependency requirements for logstash-core for the 5.0 release
-## 3.0.0
+
+# 3.0.0
  - Plugins were updated to follow the new shutdown semantic, this mainly allows Logstash to instruct input plugins to terminate gracefully, 
    instead of using Thread.raise on the plugins' threads. Ref: https://github.com/elastic/logstash/pull/3895
  - Dependency on logstash-core update to 2.0
