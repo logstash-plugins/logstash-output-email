@@ -1,3 +1,5 @@
+# 3.0.5
+  - Depend on logstash-core-plugin-api instead of logstash-core, removing the need to mass update plugins on major releases of logstash
 # 3.0.4
   - Set the version of Mail to 2.6.3, since 2.6.4 has a dependency incompatible with jruby see https://github.com/elastic/logstash/issues/4883
   
