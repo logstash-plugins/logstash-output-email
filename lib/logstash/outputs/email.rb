@@ -1,3 +1,22 @@
+#
+# ==== Usage Example
+
+# [source,ruby]
+# ----------------------------------
+# output {
+#   if "shouldmail" in [tags] {
+#     email {
+#       to => 'technical@logstash.net'
+#       from => 'monitor@logstash.net'
+#       subject => 'Alert - %{title}'
+#       body => "Tags: %{tags}\\n\\Content:\\n%{message}"
+#       domain => 'mail.logstash.net'
+#       port => 25
+#     }
+#   }
+# }
+# ----------------------------------
+
 # encoding: utf-8
 require "logstash/outputs/base"
 require "logstash/namespace"
