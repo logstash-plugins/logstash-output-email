@@ -1,3 +1,7 @@
+## 4.0.3
+  - Properly constrain mime types deps to be < 3.0 due to ruby 2.0+ requirement
+  - Uncap mail gem deps to play nicely with other plugins
+
 ## 4.0.2
   - Relax constraint on logstash-core-plugin-api to >= 1.60 <= 2.99
 
