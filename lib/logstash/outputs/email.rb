@@ -1,16 +1,35 @@
+#
+# ==== Usage Example
+
+# [source,ruby]
+# ----------------------------------
+# output {
+#   if "shouldmail" in [tags] {
+#     email {
+#       to => 'technical@logstash.net'
+#       from => 'monitor@logstash.net'
+#       subject => 'Alert - %{title}'
+#       body => "Tags: %{tags}\\n\\Content:\\n%{message}"
+#       domain => 'mail.logstash.net'
+#       port => 25
+#     }
+#   }
+# }
+# ----------------------------------
+
 # encoding: utf-8
 require "logstash/outputs/base"
 require "logstash/namespace"
 
 # Send email when an output is received. Alternatively, you may include or
-# exclude the email output execution using conditionals. 
+# exclude the email output execution using conditionals.
 class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   config_name "email"
 
   # The fully-qualified email address to send the email to.
   #
-  # This field also accepts a comma-separated string of addresses, for example: 
+  # This field also accepts a comma-separated string of addresses, for example:
   # `"me@host.com, you@host.com"`
   #
   # You can also use dynamic fields from the event with the `%{fieldname}` syntax.
@@ -24,7 +43,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   # The fully-qualified email address(es) to include as cc: address(es).
   #
-  # This field also accepts a comma-separated string of addresses, for example: 
+  # This field also accepts a comma-separated string of addresses, for example:
   # `"me@host.com, you@host.com"`
   config :cc, :validate => :string
 
@@ -104,7 +123,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   public
   def receive(event)
-    
+
 
       @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments, :to => to, :to => to)
       formatedSubject = event.sprintf(@subject)
