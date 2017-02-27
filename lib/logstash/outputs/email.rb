@@ -65,7 +65,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # Password to authenticate with the server
   config :password, :validate => :string
 
-  # Authentication method used when identifying with the server
+  # Authentication method used when identifying with the server, for example: `"login"`
   config :authentication, :validate => :string
 
   # Enables TLS when communicating with the server
