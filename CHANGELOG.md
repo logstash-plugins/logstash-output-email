@@ -1,3 +1,9 @@
+## 4.0.5
+  - Docs: Add plugin description
+
+## 4.0.4
+  - Docs: Fix plugin title
+
 ## 4.0.3
   - Properly constrain mime types deps to be < 3.0 due to ruby 2.0+ requirement
   - Uncap mail gem deps to play nicely with other plugins
