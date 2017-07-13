@@ -6,11 +6,11 @@
 # output {
 #   if "shouldmail" in [tags] {
 #     email {
-#       to => 'technical@logstash.net'
-#       from => 'monitor@logstash.net'
+#       to => 'technical@example.com'
+#       from => 'monitor@example.com'
 #       subject => 'Alert - %{title}'
 #       body => "Tags: %{tags}\\n\\Content:\\n%{message}"
-#       domain => 'mail.logstash.net'
+#       domain => 'mail.example.com'
 #       port => 25
 #     }
 #   }
@@ -30,13 +30,13 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # The fully-qualified email address to send the email to.
   #
   # This field also accepts a comma-separated string of addresses, for example:
-  # `"me@host.com, you@host.com"`
+  # `"me@example.com, you@example.com"`
   #
   # You can also use dynamic fields from the event with the `%{fieldname}` syntax.
   config :to, :validate => :string, :required => true
 
   # The fully-qualified email address for the From: field in the email.
-  config :from, :validate => :string, :default => "logstash.alert@nowhere.com"
+  config :from, :validate => :string, :default => "logstash.alert@example.com"
 
   # The fully qualified email address for the Reply-To: field.
   config :replyto, :validate => :string
@@ -44,7 +44,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # The fully-qualified email address(es) to include as cc: address(es).
   #
   # This field also accepts a comma-separated string of addresses, for example:
-  # `"me@host.com, you@host.com"`
+  # `"me@example.com, you@example.com"`
   config :cc, :validate => :string
 
   # How Logstash should send the email, either via SMTP or by invoking sendmail.
