@@ -56,7 +56,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # Port used to communicate with the mail server
   config :port, :validate => :number, :default => 25
 
-  # Domain used to send the email messages
+  # HELO/EHLO domain name
   config :domain, :validate => :string, :default => "localhost"
 
   # Username to authenticate with the server

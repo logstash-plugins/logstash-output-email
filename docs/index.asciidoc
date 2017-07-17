@@ -139,7 +139,9 @@ Run the mail relay in debug mode
   * Value type is <<string,string>>
   * Default value is `"localhost"`
 
-Domain used to send the email messages
+The HELO/EHLO domain name used in the greeting message when connecting
+to a remote SMTP server. Some servers require this name to match the
+actual hostname of the connecting client.
 
 [id="plugins-{type}s-{plugin}-from"]
 ===== `from` 
