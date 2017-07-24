@@ -70,6 +70,9 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
 
   # Enables TLS when communicating with the server
   config :use_tls, :validate => :boolean, :default => false
+  
+  # Uses SSL when sending email via SMTP
+  config :ssl, :validate => :boolean, :default => false
 
   # Run the mail relay in debug mode
   config :debug, :validate => :boolean, :default => false
@@ -102,6 +105,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       :password             => @password,
       :authentication       => @authentication,
       :enable_starttls_auto => @use_tls,
+      :ssl                  => @ssl
       :debug                => @debug
     }
 
