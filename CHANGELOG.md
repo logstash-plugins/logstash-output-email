@@ -1,3 +1,6 @@
+## 4.0.6
+  - Fix some documentation issues
+
 ## 4.0.5
   - Docs: Add plugin description
 
