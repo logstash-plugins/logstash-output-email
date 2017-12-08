@@ -105,7 +105,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       :password             => @password,
       :authentication       => @authentication,
       :enable_starttls_auto => @use_tls,
-      :ssl                  => @ssl
+      :ssl                  => @ssl,
       :debug                => @debug
     }
 
