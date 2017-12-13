@@ -125,7 +125,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   def receive(event)
 
 
-      @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments, :to => to, :to => to)
+      @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments)
       formatedSubject = event.sprintf(@subject)
       formattedBody = event.sprintf(@body)
       formattedHtmlBody = event.sprintf(@htmlbody)
