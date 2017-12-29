@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
   # mime-types >= 3 require ruby 2.0 support
   s.add_runtime_dependency 'mime-types', '< 3'
 
+  s.add_runtime_dependency 'mustache', '~> 1.0'
+
   s.add_development_dependency 'logstash-devutils'
   s.add_development_dependency 'rumbster'
   s.add_development_dependency 'logstash-input-generator'

@@ -89,5 +89,20 @@ describe "outputs/email" do
 
       end
     end
+
+    context  "mustache template for email body" do
+      it "uses the template file" do
+        subject = plugin.new("to" => "me@host",
+                             "subject" => "Hello World",
+                             "template_file" => File.dirname(__FILE__) + "/../fixtures/template.mustache",
+                             "port" => port)
+        subject.register
+        subject.receive(LogStash::Event.new("message" => "hello"))
+
+        expect(message_observer.messages.size).to eq(1)
+        expect(message_observer.messages[0].subject).to eq("Hello World")
+        expect(message_observer.messages[0].body.decoded).to eq(craft_multi_part_email('', '<h1>hello</h1>', message_observer.messages[0].content_type))
+      end
+    end
   end
 end

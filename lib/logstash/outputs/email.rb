@@ -80,6 +80,9 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # Body for the email - plain text only.
   config :body, :validate => :string, :default => ""
 
+  # Email template file to be used - as mustache template.
+  config :template_file, :validate => :string, :default => ""
+
   # HTML Body for the email, which may contain HTML markup.
   config :htmlbody, :validate => :string, :default => ""
 
@@ -93,6 +96,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   public
   def register
     require "mail"
+    require "mustache"
 
     options = {
       :address              => @address,
@@ -129,6 +133,8 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       formatedSubject = event.sprintf(@subject)
       formattedBody = event.sprintf(@body)
       formattedHtmlBody = event.sprintf(@htmlbody)
+      
+
       mail = Mail.new
       mail.from = event.sprintf(@from)
       mail.to = event.sprintf(@to)
@@ -137,18 +143,31 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       end
       mail.cc = event.sprintf(@cc)
       mail.subject = formatedSubject
-      if @htmlbody.empty?
+
+      if @htmlbody.empty? and @template_file.empty?
         formattedBody.gsub!(/\\n/, "\n") # Take new line in the email
         mail.body = formattedBody
       else
+        # This handles multipart emails
+        # cf: https://github.com/mikel/mail/#writing-and-sending-a-multipartalternative-html-and-text-email
         mail.text_part = Mail::Part.new do
           content_type "text/plain; charset=UTF-8"
           formattedBody.gsub!(/\\n/, "\n") # Take new line in the email
           body formattedBody
         end
-        mail.html_part = Mail::Part.new do
-          content_type "text/html; charset=UTF-8"
-          body formattedHtmlBody
+        
+        if @template_file.empty?
+          mail.html_part = Mail::Part.new do
+            content_type "text/html; charset=UTF-8"
+            body formattedHtmlBody
+          end
+        else
+          htmlTemplate = File.open(@template_file, "r").read
+          templatedHtmlBody = Mustache.render(htmlTemplate, event)
+          mail.html_part = Mail::Part.new do
+            content_type "text/html; charset=UTF-8"
+            body templatedHtmlBody
+          end
         end
       end
       @attachments.each do |fileLocation|
