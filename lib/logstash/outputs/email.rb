@@ -81,7 +81,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   config :body, :validate => :string, :default => ""
 
   # Email template file to be used - as mustache template.
-  config :template_file, :validate => :string, :default => ""
+  config :template_file, :validate => :path
 
   # HTML Body for the email, which may contain HTML markup.
   config :htmlbody, :validate => :string, :default => ""
@@ -122,7 +122,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
         delivery_method :@via, options
       end
     end # @via tests
-    @htmlTemplate = File.open(@template_file, "r").read unless @template_file.empty?
+    @htmlTemplate = File.open(@template_file, "r").read unless @template_file.nil?
     @logger.debug("Email Output Registered!", :config => options, :via => @via)
   end # def register
 
@@ -144,7 +144,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       mail.cc = event.sprintf(@cc)
       mail.subject = formatedSubject
 
-      if @htmlbody.empty? and @template_file.empty?
+      if @htmlbody.empty? and @template_file.nil?
         formattedBody.gsub!(/\\n/, "\n") # Take new line in the email
         mail.body = formattedBody
       else
@@ -156,7 +156,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
           body formattedBody
         end
         
-        if @template_file.empty?
+        if @template_file.nil?
           mail.html_part = Mail::Part.new do
             content_type "text/html; charset=UTF-8"
             body formattedHtmlBody
