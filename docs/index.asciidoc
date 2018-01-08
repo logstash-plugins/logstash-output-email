@@ -33,6 +33,7 @@ output {
       from => 'monitor@example.com'
       subject => 'Alert - %{title}'
       body => "Tags: %{tags}\\n\\Content:\\n%{message}"
+      template_file => "/tmp/email_template.mustache"
       domain => 'mail.example.com'
       port => 25
     }
@@ -66,6 +67,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-use_tls>> |<<boolean,boolean>>|No
 | <<plugins-{type}s-{plugin}-username>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-via>> |<<string,string>>|No
+| <<plugins-{type}s-{plugin}-template_file>> |<<path,path>>|No
 |=======================================================================
 
 Also see <<plugins-{type}s-{plugin}-common-options>> for a list of options supported by all
@@ -229,6 +231,14 @@ Username to authenticate with the server
 
 How Logstash should send the email, either via SMTP or by invoking sendmail.
 
+[id="plugins-{type}s-{plugin}-template_file"]
+===== `template_file` 
+
+  * Value type is <<path,path>>
+  * There is no default value for this setting.
+
+Path of a [Mustache templating](https://mustache.github.io/) file used for email templating. See example in test fixture.
+Can be used with `body` to send multi-part emails. Takes precedence over `htmlBody`.
 
 
 [id="plugins-{type}s-{plugin}-common-options"]
