@@ -163,7 +163,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
           end
         else
           htmlTemplate = File.open(@template_file, "r").read
-          templatedHtmlBody = Mustache.render(htmlTemplate, event)
+          templatedHtmlBody = Mustache.render(htmlTemplate, event.to_hash)
           mail.html_part = Mail::Part.new do
             content_type "text/html; charset=UTF-8"
             body templatedHtmlBody
