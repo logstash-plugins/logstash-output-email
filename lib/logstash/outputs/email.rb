@@ -122,6 +122,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
         delivery_method :@via, options
       end
     end # @via tests
+    @htmlTemplate = File.open(@template_file, "r").read unless @template_file.empty?
     @logger.debug("Email Output Registered!", :config => options, :via => @via)
   end # def register
 
@@ -134,7 +135,6 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       formattedBody = event.sprintf(@body)
       formattedHtmlBody = event.sprintf(@htmlbody)
       
-
       mail = Mail.new
       mail.from = event.sprintf(@from)
       mail.to = event.sprintf(@to)
@@ -162,8 +162,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
             body formattedHtmlBody
           end
         else
-          htmlTemplate = File.open(@template_file, "r").read
-          templatedHtmlBody = Mustache.render(htmlTemplate, event.to_hash)
+          templatedHtmlBody = Mustache.render(@htmlTemplate, event.to_hash)
           mail.html_part = Mail::Part.new do
             content_type "text/html; charset=UTF-8"
             body templatedHtmlBody
