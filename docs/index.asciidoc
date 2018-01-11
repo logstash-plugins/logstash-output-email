@@ -54,6 +54,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-authentication>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-body>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-cc>> |<<string,string>>|No
+| <<plugins-{type}s-{plugin}-bcc>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-contenttype>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-debug>> |<<boolean,boolean>>|No
 | <<plugins-{type}s-{plugin}-domain>> |<<string,string>>|No
@@ -117,6 +118,16 @@ The fully-qualified email address(es) to include as cc: address(es).
 
 This field also accepts a comma-separated string of addresses, for example:
 `"me@example.com, you@example.com"`
+
+[id="plugins-{type}s-{plugin}-bcc"]
+===== `bcc` 
+
+  * Value type is <<string,string>>
+  * There is no default value for this setting.
+
+The fully-qualified email address(es) to include as bcc: address(es).
+
+This field accepts several addresses like cc.
 
 [id="plugins-{type}s-{plugin}-contenttype"]
 ===== `contenttype` 

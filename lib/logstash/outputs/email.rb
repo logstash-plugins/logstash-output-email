@@ -46,6 +46,9 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # This field also accepts a comma-separated string of addresses, for example:
   # `"me@example.com, you@example.com"`
   config :cc, :validate => :string
+ 
+  # Same as cc but in blind carbon
+  config :bcc, :validate => :string
 
   # How Logstash should send the email, either via SMTP or by invoking sendmail.
   config :via, :validate => :string, :default => "smtp"
@@ -130,7 +133,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   def receive(event)
 
 
-      @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments)
+      @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :bcc => @bcc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments)
       formatedSubject = event.sprintf(@subject)
       formattedBody = event.sprintf(@body)
       formattedHtmlBody = event.sprintf(@htmlbody)
@@ -142,6 +145,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
         mail.reply_to = event.sprintf(@replyto)
       end
       mail.cc = event.sprintf(@cc)
+      mail.bcc = event.sprintf(@bcc)
       mail.subject = formatedSubject
 
       if @htmlbody.empty? and @template_file.nil?
@@ -172,7 +176,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       @attachments.each do |fileLocation|
         mail.add_file(fileLocation)
       end # end @attachments.each
-      @logger.debug? and @logger.debug("Sending mail with these values : ", :from => mail.from, :to => mail.to, :cc => mail.cc, :subject => mail.subject)
+      @logger.debug? and @logger.debug("Sending mail with these values : ", :from => mail.from, :to => mail.to, :cc => mail.cc, :bcc => mail.bcc, :subject => mail.subject)
       begin
         mail.deliver!
       rescue StandardError => e
