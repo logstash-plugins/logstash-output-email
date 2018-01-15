@@ -1,5 +1,7 @@
-## 4.0.7
+## 4.1.0
   - Update gemspec summary
+  - Add bcc suport #55
+  - Add mustache templating #51
 
 ## 4.0.6
   - Fix some documentation issues
