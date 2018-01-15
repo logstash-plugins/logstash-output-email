@@ -90,6 +90,8 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   config :htmlbody, :validate => :string, :default => ""
 
   # Attachments - specify the name(s) and location(s) of the files.
+  #
+  # You can also use dynamic fields from the event with the `%{fieldname}` syntax.
   config :attachments, :validate => :array, :default => []
 
   # contenttype : for multipart messages, set the content-type and/or charset of the HTML part.
@@ -174,7 +176,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
         end
       end
       @attachments.each do |fileLocation|
-        mail.add_file(fileLocation)
+        mail.add_file(event.sprintf(fileLocation))
       end # end @attachments.each
       @logger.debug? and @logger.debug("Sending mail with these values : ", :from => mail.from, :to => mail.to, :cc => mail.cc, :bcc => mail.bcc, :subject => mail.subject)
       begin
