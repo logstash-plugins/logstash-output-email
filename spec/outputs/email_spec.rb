@@ -101,8 +101,61 @@ describe "outputs/email" do
 
         expect(message_observer.messages.size).to eq(1)
         expect(message_observer.messages[0].subject).to eq("Hello World")
-        expect(message_observer.messages[0].body.decoded).to eq(craft_multi_part_email('', '<h1>hello</h1>', message_observer.messages[0].content_type))
+        expect(message_observer.messages[0].html_part.body.raw_source).to eq("<h1>hello</h1>\r\n")
       end
     end
+
+    context "sends only the selected content-type" do
+
+      it "of text/plain" do
+        subject = plugin.new(
+          "to" => "me@host",
+          "body" => "text/plain",
+          "port" => port,
+        )
+        subject.register
+        subject.receive(LogStash::Event.new("message" => "hello"))
+
+        expect(message_observer.messages.size).to eq(1)
+        expect(message_observer.messages[0].parts.size).to eq(0)
+        expect(message_observer.messages[0].content_type.split(/;/)[0]).to eq('text/plain')
+        expect(message_observer.messages[0].body.raw_source).to eq("text/plain\r\n")
+      end
+
+      it "of text/html" do
+        subject = plugin.new(
+          "to" => "me@host",
+          "htmlbody" => "text/html",
+          "port" => port,
+        )
+        subject.register
+        subject.receive(LogStash::Event.new("message" => "hello"))
+
+        expect(message_observer.messages.size).to eq(1)
+        expect(message_observer.messages[0].parts.size).to eq(1)
+        expect(message_observer.messages[0].html_part.content_type.split(/;/)[0]).to eq('text/html')
+        expect(message_observer.messages[0].html_part.body.raw_source).to eq("text/html")
+      end
+
+      it "of both" do
+        subject = plugin.new(
+          "to" => "me@host",
+          "body" => "text/plain",
+          "htmlbody" => "text/html",
+          "port" => port,
+        )
+        subject.register
+        subject.receive(LogStash::Event.new("message" => "hello"))
+
+        expect(message_observer.messages.size).to eq(1)
+        expect(message_observer.messages[0].parts.size).to eq(2)
+        expect(message_observer.messages[0].html_part.content_type.split(/;/)[0]).to eq('text/html')
+        expect(message_observer.messages[0].html_part.body.raw_source).to eq("text/html")
+        expect(message_observer.messages[0].text_part.content_type.split(/;/)[0]).to eq('text/plain')
+        expect(message_observer.messages[0].text_part.body.raw_source).to eq("text/plain")
+      end
+
+    end
+
   end
 end

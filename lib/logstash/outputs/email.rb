@@ -46,7 +46,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # This field also accepts a comma-separated string of addresses, for example:
   # `"me@example.com, you@example.com"`
   config :cc, :validate => :string
- 
+
   # Same as cc but in blind carbon
   config :bcc, :validate => :string
 
@@ -137,7 +137,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       formatedSubject = event.sprintf(@subject)
       formattedBody = event.sprintf(@body)
       formattedHtmlBody = event.sprintf(@htmlbody)
-      
+
       mail = Mail.new
       mail.from = event.sprintf(@from)
       mail.to = event.sprintf(@to)
@@ -148,29 +148,18 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       mail.bcc = event.sprintf(@bcc)
       mail.subject = formatedSubject
 
-      if @htmlbody.empty? and @template_file.nil?
-        formattedBody.gsub!(/\\n/, "\n") # Take new line in the email
+      formattedBody.gsub!(/\\n/, "\n") # Take new line in the email
+
+      if !@body.empty?
         mail.body = formattedBody
-      else
-        # This handles multipart emails
-        # cf: https://github.com/mikel/mail/#writing-and-sending-a-multipartalternative-html-and-text-email
-        mail.text_part = Mail::Part.new do
-          content_type "text/plain; charset=UTF-8"
-          formattedBody.gsub!(/\\n/, "\n") # Take new line in the email
-          body formattedBody
+      end
+      if !@htmlbody.empty? or !@template_file.nil?
+        if @template_file
+          formattedHtmlBody = Mustache.render(@htmlTemplate, event.to_hash)
         end
-        
-        if @template_file.nil?
-          mail.html_part = Mail::Part.new do
-            content_type "text/html; charset=UTF-8"
-            body formattedHtmlBody
-          end
-        else
-          templatedHtmlBody = Mustache.render(@htmlTemplate, event.to_hash)
-          mail.html_part = Mail::Part.new do
-            content_type "text/html; charset=UTF-8"
-            body templatedHtmlBody
-          end
+        mail.html_part = Mail::Part.new do
+          content_type "text/html; charset=UTF-8"
+          body formattedHtmlBody
         end
       end
       @attachments.each do |fileLocation|
