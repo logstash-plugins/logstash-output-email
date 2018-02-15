@@ -96,7 +96,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # NOTE: this may not be functional (KH)
   config :contenttype, :validate => :string, :default => "text/html; charset=UTF-8"
 
-  # Add custom headers to the sent email
+  # Custom headers to attach to the email
   config :custom_headers, :validate => :hash, :default => {}
 
   public
