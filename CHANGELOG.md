@@ -1,3 +1,6 @@
+## 4.1.1
+  - Docs: Set the default_codec doc attribute.
+
 ## 4.1.0
   - Update gemspec summary
   - Add bcc suport #55
