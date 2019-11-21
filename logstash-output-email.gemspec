@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   # Gem dependencies
   s.add_runtime_dependency "logstash-core-plugin-api", ">= 1.60", "<= 2.99"
 
-  s.add_runtime_dependency 'mail', '~> 2.6.3'
+  s.add_runtime_dependency 'mail', '~> 2.7'
   # mime-types >= 3 require ruby 2.0 support
   s.add_runtime_dependency 'mime-types', '< 3'
 
@@ -34,4 +34,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'gserver'
 
 end
-
