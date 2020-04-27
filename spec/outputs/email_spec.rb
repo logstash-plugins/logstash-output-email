@@ -104,5 +104,22 @@ describe "outputs/email" do
         expect(message_observer.messages[0].body.decoded).to eq(craft_multi_part_email('', '<h1>hello</h1>', message_observer.messages[0].content_type))
       end
     end
+
+    context  "custom headers for email" do
+      it "adds custom headers" do
+        headers = { "header_1" => "header_1_value", "header_2" => "header_2_value" } 
+        subject = plugin.new("to" => "me@host",
+                     "subject" => "Hello World",
+                     "body" => "Line1\\nLine2\\nLine3",
+                     "port" => port,
+                     "custom_headers" => headers )
+        subject.register
+        subject.receive(LogStash::Event.new("message" => "hello"))
+        expect(message_observer.messages.size).to eq(1)
+        headers.each do |key, value|
+          expect(message_observer.messages[0].header[key].value).to eq(value)
+        end
+      end
+    end
   end
 end

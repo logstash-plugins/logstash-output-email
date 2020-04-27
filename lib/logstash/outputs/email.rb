@@ -96,6 +96,9 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   # NOTE: this may not be functional (KH)
   config :contenttype, :validate => :string, :default => "text/html; charset=UTF-8"
 
+  # Custom headers to attach to the email
+  config :custom_headers, :validate => :hash, :default => {}
+
   public
   def register
     require "mail"
@@ -133,7 +136,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   def receive(event)
 
 
-      @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :bcc => @bcc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments)
+      @logger.debug? and @logger.debug("Creating mail with these settings : ", :via => @via, :options => @options, :from => @from, :to => @to, :cc => @cc, :bcc => @bcc, :subject => @subject, :body => @body, :content_type => @contenttype, :htmlbody => @htmlbody, :attachments => @attachments, :custom_headers => @custom_headers)
       formatedSubject = event.sprintf(@subject)
       formattedBody = event.sprintf(@body)
       formattedHtmlBody = event.sprintf(@htmlbody)
@@ -147,6 +150,10 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       mail.cc = event.sprintf(@cc)
       mail.bcc = event.sprintf(@bcc)
       mail.subject = formatedSubject
+
+      @custom_headers.each do |key, value|
+        mail.header[event.sprintf(key)] = event.sprintf(value)
+      end
 
       if @htmlbody.empty? and @template_file.nil?
         formattedBody.gsub!(/\\n/, "\n") # Take new line in the email
