@@ -60,6 +60,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-debug>> |<<boolean,boolean>>|No
 | <<plugins-{type}s-{plugin}-domain>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-from>> |<<string,string>>|No
+| <<plugins-{type}s-{plugin}-headers>> |<<hash,hash>>|No
 | <<plugins-{type}s-{plugin}-htmlbody>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-password>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-port>> |<<number,number>>|No
@@ -164,6 +165,14 @@ actual hostname of the connecting client.
   * Default value is `"logstash.alert@example.com"`
 
 The fully-qualified email address for the From: field in the email.
+
+[id="plugins-{type}s-{plugin}-headers"]
+===== `headers` 
+
+  * Value type is <<hash,hash>>
+  * Default value is `{}`
+
+Custom headers to attach to the email.
 
 [id="plugins-{type}s-{plugin}-htmlbody"]
 ===== `htmlbody` 
