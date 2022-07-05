@@ -1,3 +1,6 @@
+## 4.2.0
+  - Support adding custom headers [#57](https://api.github.com/repos/logstash-plugins/logstash-output-email/pulls/57)
+
 ## 4.1.0
   - Update gemspec summary
   - Add bcc suport #55
