@@ -1,5 +1,7 @@
 ## 4.2.0
   - Support adding custom headers [#57](https://github.com/logstash-plugins/logstash-output-email/pull/57)
+  - Update 'mail' dependency to ~> 2 and 'mustache' to ~> 1
+  - Remove constraint on 'mime-types'
 
 ## 4.1.1
   - Docs: Set the default_codec doc attribute.
