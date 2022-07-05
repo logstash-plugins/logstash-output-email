@@ -1,5 +1,8 @@
 ## 4.2.0
-  - Support adding custom headers [#57](https://api.github.com/repos/logstash-plugins/logstash-output-email/pulls/57)
+  - Support adding custom headers [#57](https://github.com/logstash-plugins/logstash-output-email/pull/57)
+
+## 4.1.1
+  - Docs: Set the default_codec doc attribute.
 
 ## 4.1.0
   - Update gemspec summary

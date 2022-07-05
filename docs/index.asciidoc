@@ -1,5 +1,6 @@
 :plugin: email
 :type: output
+:default_codec: plain
 
 ///////////////////////////////////////////
 START - GENERATED VARIABLES, DO NOT EDIT!
@@ -254,3 +255,5 @@ Can be used with `body` to send multi-part emails. Takes precedence over `htmlBo
 
 [id="plugins-{type}s-{plugin}-common-options"]
 include::{include_path}/{type}.asciidoc[]
+
+:default_codec!:
