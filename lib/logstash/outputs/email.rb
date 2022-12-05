@@ -66,7 +66,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
   config :username, :validate => :string
 
   # Password to authenticate with the server
-  config :password, :validate => :string
+  config :password, :validate => :password
 
   # Authentication method used when identifying with the server
   config :authentication, :validate => :string
@@ -106,7 +106,7 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       :port                 => @port,
       :domain               => @domain,
       :user_name            => @username,
-      :password             => @password,
+      :password             => @password.nil? ? nil : @password.value,
       :authentication       => @authentication,
       :enable_starttls_auto => @use_tls,
       :debug                => @debug

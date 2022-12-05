@@ -61,7 +61,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-domain>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-from>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-htmlbody>> |<<string,string>>|No
-| <<plugins-{type}s-{plugin}-password>> |<<string,string>>|No
+| <<plugins-{type}s-{plugin}-password>> |<<password,password>>|No
 | <<plugins-{type}s-{plugin}-port>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-replyto>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-subject>> |<<string,string>>|No
@@ -176,7 +176,7 @@ HTML Body for the email, which may contain HTML markup.
 [id="plugins-{type}s-{plugin}-password"]
 ===== `password` 
 
-  * Value type is <<string,string>>
+  * Value type is <<password,password>>
   * There is no default value for this setting.
 
 Password to authenticate with the server

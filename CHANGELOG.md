@@ -1,3 +1,6 @@
+## 4.1.2
+  - Change `password` config type to `Password` to prevent leaks in debug logs [#65](https://github.com/logstash-plugins/logstash-output-email/pull/65)
+
 ## 4.1.1
   - Docs: Set the default_codec doc attribute.
 
