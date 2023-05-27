@@ -126,7 +126,9 @@ class LogStash::Outputs::Email < LogStash::Outputs::Base
       end
     end # @via tests
     @htmlTemplate = File.open(@template_file, "r").read unless @template_file.nil?
-    @logger.debug("Email Output Registered!", :config => options, :via => @via)
+    log_options = options.clone
+    log_options[:password] = '<password>'
+    @logger.debug("Email Output Registered!", :config => log_options, :via => @via)
   end # def register
 
   public

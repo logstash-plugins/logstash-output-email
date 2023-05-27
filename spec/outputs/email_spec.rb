@@ -105,4 +105,17 @@ describe "outputs/email" do
       end
     end
   end
+
+  describe "debugging `password`" do
+
+    it "should not show origin value" do
+      subject = plugin.new("to" => ["email1@host, email2@host"],
+                           "port" => port,
+                           "username" => "email_user",
+                           "password" => "$ecre&-key")
+
+      expect(subject.logger).to receive(:debug).with('<password>')
+      subject.logger.send(:debug, subject.password.to_s)
+    end
+  end
 end
