@@ -1,3 +1,6 @@
+## 4.1.3
+ - Fix: updates gem depencney to require mime-type at least version 3 [#66](https://github.com/logstash-plugins/logstash-output-email/pull/66)
+
 ## 4.1.2
   - Change `password` config type to `Password` to prevent leaks in debug logs [#65](https://github.com/logstash-plugins/logstash-output-email/pull/65)
 
