@@ -1,3 +1,6 @@
+## 4.1.3
+  - Upgrade `email` dependency so that supports Ruby 3.1. This also fixes the `net-smtp` load regression [#69](https://github.com/logstash-plugins/logstash-output-email/pull/69)
+
 ## 4.1.2
   - Change `password` config type to `Password` to prevent leaks in debug logs [#65](https://github.com/logstash-plugins/logstash-output-email/pull/65)
 
@@ -6,7 +9,7 @@
 
 ## 4.1.0
   - Update gemspec summary
-  - Add bcc suport #55
+  - Add bcc support #55
   - Add mustache templating #51
 
 ## 4.0.6
