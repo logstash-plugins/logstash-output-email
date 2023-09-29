@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'mail', '~> 2.8'
 
   # mime-types >= 3 require ruby 2.0 support
-  s.add_runtime_dependency 'mime-types', '< 3'
+  s.add_runtime_dependency 'mime-types', '>= 3' # < 3 uses numbered parameter which is deprecated
 
   s.add_runtime_dependency 'mustache', '>= 0.99.8'
 
