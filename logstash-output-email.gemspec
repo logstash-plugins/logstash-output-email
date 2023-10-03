@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-output-email'
-  s.version         = '4.1.2'
+  s.version         = '4.1.3'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = "Sends email to a specified address when output is received"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
   s.authors         = ["Elastic"]
   s.email           = 'info@elastic.co'
-  s.homepage        = "http://www.elastic.co/guide/en/logstash/current/index.html"
+  s.homepage        = "https://www.elastic.co/logstash"
   s.require_paths = ["lib"]
 
   # Files
@@ -22,9 +22,8 @@ Gem::Specification.new do |s|
   # Gem dependencies
   s.add_runtime_dependency "logstash-core-plugin-api", ">= 1.60", "<= 2.99"
 
-  s.add_runtime_dependency 'mail', '~> 2.6.3'
-  # mime-types >= 3 require ruby 2.0 support
-  s.add_runtime_dependency 'mime-types', '< 3'
+  s.add_runtime_dependency 'mail', '~> 2.8'
+
 
   s.add_runtime_dependency 'mustache', '>= 0.99.8'
 
