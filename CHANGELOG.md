@@ -1,3 +1,6 @@
+## 4.1.4
+  - Requiere `mail` dependency 2.9 or later  [#72](https://github.com/logstash-plugins/logstash-output-email/pull/72)
+
 ## 4.1.3
   - Upgrade `email` dependency so that supports Ruby 3.1. This also fixes the `net-smtp` load regression [#69](https://github.com/logstash-plugins/logstash-output-email/pull/69)
 
